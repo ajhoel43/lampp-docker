@@ -1,0 +1,5 @@
+tmp/
+database/
+phpmyadmin/
+cert/
+*logs*
