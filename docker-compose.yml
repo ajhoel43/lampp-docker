@@ -6,31 +6,48 @@ services:
     restart: always
     ports:
       - 80:80
-      - 443:443
+      # - 443:443
     networks: 
       - frontend
       - backend
     volumes:
-      - ./public_html:/usr/local/apache2/htdocs
+      - ~/Project/web:/usr/local/apache2/htdocs
       - ./cert/:/usr/local/apache2/cert/
+      - ./apache/logs:/var/log/apache
     depends_on:
       - php
-      - mysql
+      - db
   php:
     build: './php'
     restart: always
     networks: 
       - backend
     volumes:
-      - ./public_html:/usr/local/apache2/htdocs
+      - ~/Project/web:/usr/local/apache2/htdocs
       - ./tmp:/usr/local/tmp
-  mysql:
+    depends_on:
+      - db
+  db:
     build: './mysql'
     restart: always
     networks:
       - backend
     volumes:
       - ./database:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5
+    restart: always
+    ports:
+     - 8011:80
+    environment:
+      PMA_HOST: db
+    volumes:
+      - ./phpmyadmin:/var/www/phpmyadmin
+    networks: 
+      - backend
+    depends_on:
+      - db
+
 networks: 
   backend:
   frontend:
